@@ -72,7 +72,10 @@ public class EnemyAMovement : MonoBehaviour
         controller.Move(Time.deltaTime * moveSpeed * chaseSpeedBoost * chaseDir);
 
         if ((transform.position - target.position).magnitude < 0.5) {
-            Debug.Log("PERDU");
+            GameObject.FindGameObjectWithTag("MainCamera").transform.GetChild(0).GetComponent<SpriteRenderer>()
+                .enabled = true;
+
+            Time.timeScale = 0.0f;
         }
     }
 
