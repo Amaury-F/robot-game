@@ -557,6 +557,9 @@ MonoBehaviour:
   moveSpeed: 1
   attackDistance: 0.2
   target: {fileID: 1951139653}
+  avoidance:
+    serializedVersion: 2
+    m_Bits: 0
   fieldOfView: {fileID: 1327832093}
 --- !u!61 &464598818
 BoxCollider2D:
