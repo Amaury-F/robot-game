@@ -62,7 +62,19 @@ public class EnemyBMovement : MonoBehaviour
     private void Chase()
     {
         Vector3 chaseDir = (target.position - transform.position).normalized;
+        if (Math.Sign(chaseDir.x) == Math.Sign(transform.localScale.x)) {
+            Vector3 enemyScale = transform.localScale;
+            enemyScale.x *= -1;
+            transform.localScale = enemyScale;
+        }
         controller.Move(Time.deltaTime * moveSpeed * chaseSpeedBoost * chaseDir);
+        
+        if ((transform.position - target.position).magnitude < 0.5) {
+            GameObject.FindGameObjectWithTag("MainCamera").transform.GetChild(0).GetComponent<SpriteRenderer>()
+                .enabled = true;
+
+            Time.timeScale = 0.0f;
+        }
     }
 
     private void Wander()
