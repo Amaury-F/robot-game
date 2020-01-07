@@ -6,14 +6,21 @@ public class EnemyAMovement : MonoBehaviour
     public float moveSpeed = 1.0f;
     public float attackDistance = .2f;
     public Transform target;
+
+    public LayerMask avoidance;
+
     private bool facingTarget = false;
     private Vector2 moveAmount;
     private float moveDirection = 1.0f;
     private float attackSpeed = 2f;
+    private int unit = 600;
+    private Controller2D controller;
+
+    public GameObject fieldOfView;
 
     void Start()
     {
-
+        controller = GetComponent<Controller2D>();
     }
 
     void FixedUpdate()
@@ -25,6 +32,14 @@ public class EnemyAMovement : MonoBehaviour
             Chase();
         else
             Wander();
+
+        unit--;
+
+        if (unit < 1)
+        {
+            Flip();
+            unit = 600;
+        }
     }
 
     void OnCollisionEnter2D(Collision2D other)
@@ -52,8 +67,10 @@ public class EnemyAMovement : MonoBehaviour
 
     void Chase()
     {
-        Debug.Log("Hey");
-        transform.position = Vector2.MoveTowards(transform.position, target.position, attackSpeed * Time.deltaTime);
+        Vector3 vector = target.position - transform.position;
+        vector = vector.normalized;
+        controller.Move(vector * attackSpeed * Time.deltaTime);
+        //transform.position = Vector2.MoveTowards(transform.position, target.position, attackSpeed * Time.deltaTime);
     }
 
     void Wander()
@@ -64,25 +81,13 @@ public class EnemyAMovement : MonoBehaviour
 
     bool IsFacingObject()
     {
-        // Check if the gaze is looking at the front side of the object
-        Vector3 forward = transform.right;
-        Vector3 toOther = (target.position - transform.position).normalized;
+        BoxCollider2D collider = fieldOfView.GetComponent<BoxCollider2D>();
 
-        RaycastHit _hit = new RaycastHit();
-
-        if (Physics.Raycast(transform.position, transform.right, out _hit, 1))
+        foreach (GameObject go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[])
         {
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.right) * _hit.distance, Color.yellow);
-            Debug.Log("COUCOU !!!!!!");
+            //if(go.gameObject.layer == LayerMask.NameToLayer("Player"))
         }
 
-        if (Vector3.Dot(forward, toOther) < 0.7f)
-        {
-            Debug.Log("Not facing the object");
-            return false;
-        }
-
-        Debug.Log("Facing the object");
-        return true;
+            return collider.bounds.Contains(target.position);
     }
 }

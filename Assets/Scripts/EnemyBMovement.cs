@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// Drone
 public class EnemyBMovement : MonoBehaviour
 {
     public float moveSpeed = 1.0f;
@@ -8,12 +9,14 @@ public class EnemyBMovement : MonoBehaviour
     public Transform target;
     private Vector2 moveAmount;
     private float moveDirection = 1.0f;
-    private int unit = 200;
+    private int unit = 500;
     private Vector3 initialPosition;
+    private Controller2D controller;
 
     void Start()
     {
         initialPosition = transform.position;
+        controller = GetComponent<Controller2D>();
     }
 
     void FixedUpdate()
@@ -32,21 +35,17 @@ public class EnemyBMovement : MonoBehaviour
         if (unit < 1)
         {
             Flip();
-            unit = 200;
+            unit = 500;
         }
     }
 
     void OnCollisionEnter2D(Collision2D other)
     {
-
         if (other.gameObject.layer == LayerMask.NameToLayer("Objects"))
             Flip();
 
         if (other.gameObject.layer == LayerMask.NameToLayer("Level"))
             Flip();
-
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
-            Destroy(gameObject, 2);
     }
 
     private void Flip()
@@ -59,7 +58,10 @@ public class EnemyBMovement : MonoBehaviour
 
     private void Chase()
     {
-        transform.position = Vector2.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime);
+        Vector3 vector = target.position - transform.position;
+        vector = vector.normalized;
+        controller.Move(vector * moveSpeed * Time.deltaTime);
+        //transform.position = Vector2.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime);
     }
 
     private void Wander()
