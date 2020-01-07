@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Moveable
+  - Level
+  - Objects
+  - Enemies
   layers:
   - Default
   - TransparentFX
@@ -14,9 +17,11 @@ TagManager:
   - UI
   - 
   - 
+  - Level
   - Player
   - Entities
   - Platforms
+  - Objects
   - 
   - 
   - 
