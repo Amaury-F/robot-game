@@ -18,11 +18,21 @@
           </e>
         </e>
         <e p="Scripts" t="Include">
+          <e p="BoxPull.cs" t="Include" />
+          <e p="CameraController.cs" t="Include" />
+          <e p="CharacterController2D.cs" t="Include" />
+          <e p="CollisionDetection.cs" t="Include" />
+          <e p="EnemyAMovement.cs" t="Include" />
+          <e p="EnemyBMovement.cs" t="Include" />
+          <e p="EnemyCMovement.cs" t="Include" />
+          <e p="EnemyMovementController.cs" t="Include" />
           <e p="FallingObject.cs" t="Include" />
+          <e p="FieldOfView.cs" t="Include" />
           <e p="PlayerControl" t="Include">
             <e p="Controller2D.cs" t="Include" />
             <e p="PlayerControl.cs" t="Include" />
           </e>
+          <e p="PushPull.cs" t="Include" />
         </e>
       </e>
       <e p="Temp/bin" t="ExcludeRecursive" />

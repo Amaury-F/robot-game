@@ -22,7 +22,7 @@ public class PlayerControl : MonoBehaviour {
     private Animator animator;
     private SpriteRenderer renderer;
 
-    private bool isMovingBlock;
+    private bool isMovingCrate;
     private GameObject crateNear;
     private readonly List<BoxCollider2D> crates = new List<BoxCollider2D>();
     private Transform crateDetector;
@@ -67,13 +67,14 @@ public class PlayerControl : MonoBehaviour {
 
         float targetVelocityX = input.x * moveSpeed;
         animator.SetInteger(WalkDir, Math.Sign(targetVelocityX));
-        if (Math.Sign(targetVelocityX) < 0) {
-            transform.localScale = new Vector3(-1, 1, 1);
-        } else if (Math.Sign(targetVelocityX) > 0) {
-            transform.localScale = new Vector3(1, 1, 1);
+        if (!isMovingCrate) {
+            if (Math.Sign(targetVelocityX) < 0) {
+                transform.localScale = new Vector3(-1, 1, 1);
+            } else if (Math.Sign(targetVelocityX) > 0) {
+                transform.localScale = new Vector3(1, 1, 1);
+            }
         }
-        
-        
+
         velocity.x = Mathf.SmoothDamp (velocity.x, targetVelocityX, ref velocityXSmoothing,
             (controller.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
         velocity.y += gravity * Time.deltaTime;
@@ -81,15 +82,22 @@ public class PlayerControl : MonoBehaviour {
 
         
         if (Input.GetKeyDown(KeyCode.E)) {
-            if (isMovingBlock) {
-                isMovingBlock = false;
+            if (isMovingCrate) {
+                isMovingCrate = false;
+                moveSpeed *= 3;
             } else if (CheckBlockNear()) {
-                isMovingBlock = true;
+                isMovingCrate = true;
+                moveSpeed /= 3;
             }
         }
 
-        if (isMovingBlock) {
-            Debug.Log("heyy");
+        if (isMovingCrate) {
+            Controller2D crateController = crateNear.GetComponent<Controller2D>();
+
+            Vector3 crateVelocity = velocity;
+            crateVelocity.y = 0;
+            crateVelocity.z = 0;
+            crateController.Move(crateVelocity * Time.deltaTime);
         }
         
     }
