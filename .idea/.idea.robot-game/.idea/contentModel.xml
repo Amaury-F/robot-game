@@ -18,6 +18,7 @@
           </e>
         </e>
         <e p="Scripts" t="Include">
+          <e p="FallingObject.cs" t="Include" />
           <e p="PlayerControl" t="Include">
             <e p="Controller2D.cs" t="Include" />
             <e p="PlayerControl.cs" t="Include" />
