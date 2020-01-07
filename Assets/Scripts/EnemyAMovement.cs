@@ -9,7 +9,8 @@ public class EnemyAMovement : MonoBehaviour
     public float forgetDistance = 8f;
     public float chaseSpeedBoost = 1f;
     public float walkDist = 10;
-    
+    public bool mustMove = true;
+
     private Transform target;
     
     private bool isChasing;
@@ -33,12 +34,17 @@ public class EnemyAMovement : MonoBehaviour
 
         isChasing = CheckPlayerInRange();
 
-
-        if (isChasing) {
-            Chase();
-        } else {
-            Return(initialPosition);
-            Wander();
+        if(mustMove)
+        {
+            if (isChasing)
+            {
+                Chase();
+            }
+            else
+            {
+                Return(initialPosition);
+                Wander();
+            }
         }
     }
 

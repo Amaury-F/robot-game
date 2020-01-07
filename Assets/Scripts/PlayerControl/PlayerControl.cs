@@ -89,21 +89,19 @@ public class PlayerControl : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.E)) {
             if (isMovingCrate) {
                 isMovingCrate = false;
-                moveSpeed *= 3;
+                moveSpeed *= 2;
             } else if (CheckBlockNear()) {
                 isMovingCrate = true;
-                moveSpeed /= 3;
+                moveSpeed /= 2;
             }
-        }
-
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            foreach (IInteractable item in itemToInteractWith)
+            else
             {
-                item.Interact();
+                foreach (IInteractable item in itemToInteractWith)
+                {
+                    item.Interact();
+                }
             }
         }
-
 
         if (isMovingCrate) {
             Controller2D crateController = crateNear.GetComponent<Controller2D>();
