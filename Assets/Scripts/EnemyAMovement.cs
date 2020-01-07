@@ -64,12 +64,16 @@ public class EnemyAMovement : MonoBehaviour
         Vector3 chaseDir = (target.position - transform.position).normalized;
         chaseDir.y = 0;
         controller.Move(Time.deltaTime * moveSpeed * chaseSpeedBoost * chaseDir);
+
+        if ((transform.position - target.position).magnitude < 0.5) {
+            Debug.Log("PERDU");
+        }
     }
 
     private void Wander()
     {
         moveAmount.x = moveDirection * moveSpeed * Time.deltaTime;
-        walked += moveAmount.x;
+        walked += Math.Abs(moveAmount.x);
         if (walked > walkDist) {
             walked = 0;
             Flip();
