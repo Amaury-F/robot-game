@@ -68,7 +68,7 @@ public class EnemyBMovement : MonoBehaviour
     private void Wander()
     {
         moveAmount.x = moveDirection * moveSpeed * Time.deltaTime;
-        walked += moveAmount.x;
+        walked += Math.Abs(moveAmount.x);
         if (walked > walkDist) {
             walked = 0;
             Flip();
