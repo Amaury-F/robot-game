@@ -13,6 +13,7 @@ public class PlayerControl : MonoBehaviour {
     public float accelerationTimeAirborne = .2f;
     public float accelerationTimeGrounded = .1f;
     public float moveSpeed = 6;
+    public bool isOnLadder = false;
 
     private float gravity;
     private float jumpVelocity;
@@ -82,7 +83,10 @@ public class PlayerControl : MonoBehaviour {
         velocity.y += gravity * Time.deltaTime;
 
         if (Input.GetKey(KeyCode.R)) {
-            velocity.y -= (gravity - jumpVelocity/2) * Time.deltaTime;
+            if(isOnLadder)
+            {
+                velocity.y -= (gravity - jumpVelocity / 2) * Time.deltaTime;
+            }
         }
         controller.Move(velocity * Time.deltaTime);
         

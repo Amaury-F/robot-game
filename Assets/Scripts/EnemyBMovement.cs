@@ -69,7 +69,7 @@ public class EnemyBMovement : MonoBehaviour
         }
         controller.Move(Time.deltaTime * moveSpeed * chaseSpeedBoost * chaseDir);
         
-        if ((transform.position - target.position).magnitude < 0.5) {
+        if ((transform.position - target.position).magnitude < 1.7) {
             GameObject.FindGameObjectWithTag("MainCamera").transform.GetChild(0).GetComponent<SpriteRenderer>()
                 .enabled = true;
 
