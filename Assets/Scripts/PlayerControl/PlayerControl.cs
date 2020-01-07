@@ -31,6 +31,8 @@ public class PlayerControl : MonoBehaviour {
     private static readonly int WalkDir = Animator.StringToHash("walkDir");
     private static readonly int IsJumping = Animator.StringToHash("isJumping");
 
+    private List<IInteractable> itemToInteractWith = new List<IInteractable>();
+
     void Start() {
         controller = GetComponent<Controller2D>();
         animator = GetComponent<Animator>();
@@ -94,6 +96,15 @@ public class PlayerControl : MonoBehaviour {
             }
         }
 
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            foreach (IInteractable item in itemToInteractWith)
+            {
+                item.Interact();
+            }
+        }
+
+
         if (isMovingCrate) {
             Controller2D crateController = crateNear.GetComponent<Controller2D>();
 
@@ -115,6 +126,24 @@ public class PlayerControl : MonoBehaviour {
 
         return false;
     }
-    
-    
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        IInteractable item = collision.GetComponent<IInteractable>();
+        if (item != null)
+        {
+            itemToInteractWith.Add(item);
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        IInteractable item = collision.GetComponent<IInteractable>();
+        if (item != null)
+        {
+            itemToInteractWith.Remove(item);
+        }
+    }
+
+
+
 }
