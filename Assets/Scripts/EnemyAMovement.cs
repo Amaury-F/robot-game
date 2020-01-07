@@ -23,10 +23,8 @@ public class EnemyAMovement : MonoBehaviour
         controller = GetComponent<Controller2D>();
     }
 
-    void FixedUpdate()
-    {
+    void FixedUpdate() {
         float dist = Vector3.Distance(target.position, transform.position);
-        Debug.Log(IsFacingObject());
 
         if (dist < attackDistance && IsFacingObject())
             Chase();
