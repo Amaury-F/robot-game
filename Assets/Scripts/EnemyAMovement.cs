@@ -1,61 +1,57 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 
+// Drone
 public class EnemyAMovement : MonoBehaviour
 {
     public float moveSpeed = 1.0f;
-    public float attackDistance = .2f;
-    public Transform target;
-
-    public LayerMask avoidance;
-
-    private bool facingTarget = false;
+    public float forgetDistance = 8f;
+    public float chaseSpeedBoost = 1f;
+    public float walkDist = 10;
+    
+    private Transform target;
+    
+    private bool isChasing;
     private Vector2 moveAmount;
     private float moveDirection = 1.0f;
-    private float attackSpeed = 2f;
-    private int unit = 600;
+    private float walked = 0;
+    private Vector3 initialPosition;
     private Controller2D controller;
-
-    public GameObject fieldOfView;
+    private DetectionZone detection;
 
     void Start()
     {
+        initialPosition = transform.position;
         controller = GetComponent<Controller2D>();
+        detection = transform.GetChild(0).gameObject.GetComponent<DetectionZone>();
+        
+        target = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void FixedUpdate() {
-        float dist = Vector3.Distance(target.position, transform.position);
 
-        if (dist < attackDistance && IsFacingObject())
+        isChasing = CheckPlayerInRange();
+
+
+        if (isChasing) {
             Chase();
-        else
+        } else {
+            Return(initialPosition);
             Wander();
-
-        unit--;
-
-        if (unit < 1)
-        {
-            Flip();
-            unit = 600;
         }
     }
 
-    void OnCollisionEnter2D(Collision2D other)
-    {
-
-        if (other.gameObject.layer == LayerMask.NameToLayer("Objects"))
-            Flip();
-
-        if (other.gameObject.layer == LayerMask.NameToLayer("Level"))
-        {
-            if (other.gameObject.name != "Ground")
-                Flip();
+    bool CheckPlayerInRange() {
+        float dist = Vector3.Distance(target.position, transform.position);
+        if (isChasing) {
+            return dist < forgetDistance;
         }
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
-            Destroy(gameObject, 2);
+
+        return detection.TryDetectPlayer();
     }
 
-    void Flip()
+    private void Flip()
     {
         moveDirection *= -1;
         Vector3 enemyScale = transform.localScale;
@@ -63,29 +59,38 @@ public class EnemyAMovement : MonoBehaviour
         transform.localScale = enemyScale;
     }
 
-    void Chase()
+    private void Chase()
     {
-        Vector3 vector = target.position - transform.position;
-        vector = vector.normalized;
-        controller.Move(vector * attackSpeed * Time.deltaTime);
-        //transform.position = Vector2.MoveTowards(transform.position, target.position, attackSpeed * Time.deltaTime);
+        Vector3 chaseDir = (target.position - transform.position).normalized;
+        chaseDir.y = 0;
+        controller.Move(Time.deltaTime * moveSpeed * chaseSpeedBoost * chaseDir);
     }
 
-    void Wander()
+    private void Wander()
     {
         moveAmount.x = moveDirection * moveSpeed * Time.deltaTime;
-        transform.Translate(moveAmount);
+        walked += moveAmount.x;
+        if (walked > walkDist) {
+            walked = 0;
+            Flip();
+        }
+        if (controller.Move(moveAmount)) {
+            Flip();
+        }
     }
 
-    bool IsFacingObject()
+    void Return(Vector3 initPos)
     {
-        BoxCollider2D collider = fieldOfView.GetComponent<BoxCollider2D>();
+            transform.position = Vector2.MoveTowards(transform.position, new Vector3 (transform.position.x, initPos.y, transform.position.z), moveSpeed * Time.deltaTime);
+    }
+    
+    private void OnDrawGizmos() {
+        Gizmos.DrawWireSphere(transform.position, forgetDistance);
 
-        foreach (GameObject go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[])
-        {
-            //if(go.gameObject.layer == LayerMask.NameToLayer("Player"))
-        }
-
-            return collider.bounds.Contains(target.position);
+        Gizmos.color = Color.blue;
+        var transform1 = transform;
+        Vector3 a = transform1.position;
+        a.x += walkDist;
+        Gizmos.DrawLine(transform1.position, a);
     }
 }

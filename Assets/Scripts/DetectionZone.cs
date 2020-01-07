@@ -18,37 +18,36 @@ public class DetectionZone : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
     }
 
-    private void Update()
-    {
-        if (playerInTriggerZone)
-        {
-            TryDetectPlayer();
-        }
-    }
-    private void TryDetectPlayer()
-    {
-        Vector2 rayOrigin = rayPointOrigin.transform.position;
-        Vector2 rayTarget = new Vector2(player.transform.position.x, player.transform.position.y + rayTargetOffset) - rayOrigin;
 
-        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, rayTarget, 15f, collisionMask);
+    public bool TryDetectPlayer()
+    {
+        if (playerInTriggerZone) {
+            Vector2 rayOrigin = rayPointOrigin.transform.position;
+            Vector2 rayTarget = new Vector2(player.transform.position.x, player.transform.position.y + rayTargetOffset) - rayOrigin;
 
-        if (hit)
-        {
-            if (hit.transform.gameObject == player)
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, rayTarget, 15f, collisionMask);
+
+            if (hit)
             {
-                Debug.DrawRay(rayOrigin, (hit.point - rayOrigin), Color.red, 0.01f);
-                Debug.Log("Kill Player");
-            }
-            else
-            {
-                Debug.DrawRay(rayOrigin, (hit.point - rayOrigin), Color.green, 0.01f);
+                if (hit.transform.gameObject == player)
+                {
+                    Debug.DrawRay(rayOrigin, (hit.point - rayOrigin), Color.red, 0.01f);
+                    return true;
+                }
+                else
+                {
+                    Debug.DrawRay(rayOrigin, (hit.point - rayOrigin), Color.green, 0.01f);
+                }
             }
         }
+
+        return false;
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Player")
+        if (collision.CompareTag("Player"))
         {
             playerInTriggerZone = true;
         }

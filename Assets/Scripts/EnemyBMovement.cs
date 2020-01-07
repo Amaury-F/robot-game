@@ -6,22 +6,27 @@ using System.Collections;
 public class EnemyBMovement : MonoBehaviour
 {
     public float moveSpeed = 1.0f;
-    public float attackDistance = 3f;
     public float forgetDistance = 8f;
     public float chaseSpeedBoost = 1f;
-    public Transform target;
+    public float walkDist = 10;
+    
+    private Transform target;
     
     private bool isChasing;
     private Vector2 moveAmount;
     private float moveDirection = 1.0f;
-    private int unit = 500;
+    private float walked = 0;
     private Vector3 initialPosition;
     private Controller2D controller;
+    private DetectionZone detection;
 
     void Start()
     {
         initialPosition = transform.position;
         controller = GetComponent<Controller2D>();
+        detection = transform.GetChild(0).gameObject.GetComponent<DetectionZone>();
+        
+        target = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void FixedUpdate() {
@@ -35,33 +40,15 @@ public class EnemyBMovement : MonoBehaviour
             Return(initialPosition);
             Wander();
         }
-
-        unit--;
-
-        if (unit < 1)
-        {
-            Flip();
-            unit = 500;
-        }
     }
 
     bool CheckPlayerInRange() {
         float dist = Vector3.Distance(target.position, transform.position);
-        if (isChasing && dist > forgetDistance) {
-            return false;
+        if (isChasing) {
+            return dist < forgetDistance;
         }
 
-        if (dist < attackDistance) {
-            var targetPos = target.position;
-            var originPos = transform.position;
-            RaycastHit2D hit = Physics2D.Raycast(originPos, targetPos - originPos,
-                (targetPos - originPos).magnitude, controller.collisionMask);
-            
-            return !hit;
-        }
-
-        return isChasing;
-
+        return detection.TryDetectPlayer();
     }
 
     private void Flip()
@@ -76,12 +63,16 @@ public class EnemyBMovement : MonoBehaviour
     {
         Vector3 chaseDir = (target.position - transform.position).normalized;
         controller.Move(Time.deltaTime * moveSpeed * chaseSpeedBoost * chaseDir);
-        //transform.position = Vector2.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime);
     }
 
     private void Wander()
     {
         moveAmount.x = moveDirection * moveSpeed * Time.deltaTime;
+        walked += moveAmount.x;
+        if (walked > walkDist) {
+            walked = 0;
+            Flip();
+        }
         if (controller.Move(moveAmount)) {
             Flip();
         }
@@ -91,11 +82,14 @@ public class EnemyBMovement : MonoBehaviour
     {
             transform.position = Vector2.MoveTowards(transform.position, new Vector3 (transform.position.x, initPos.y, transform.position.z), moveSpeed * Time.deltaTime);
     }
-
+    
     private void OnDrawGizmos() {
         Gizmos.DrawWireSphere(transform.position, forgetDistance);
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackDistance);
-        
+
+        Gizmos.color = Color.blue;
+        var transform1 = transform;
+        Vector3 a = transform1.position;
+        a.x += walkDist;
+        Gizmos.DrawLine(transform1.position, a);
     }
 }

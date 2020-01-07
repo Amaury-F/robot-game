@@ -22,6 +22,7 @@
           <e p="CameraController.cs" t="Include" />
           <e p="CharacterController2D.cs" t="Include" />
           <e p="CollisionDetection.cs" t="Include" />
+          <e p="DetectionZone.cs" t="Include" />
           <e p="EnemyAMovement.cs" t="Include" />
           <e p="EnemyBMovement.cs" t="Include" />
           <e p="EnemyCMovement.cs" t="Include" />

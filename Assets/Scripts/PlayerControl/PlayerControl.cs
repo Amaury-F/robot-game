@@ -78,8 +78,11 @@ public class PlayerControl : MonoBehaviour {
         velocity.x = Mathf.SmoothDamp (velocity.x, targetVelocityX, ref velocityXSmoothing,
             (controller.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
         velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
 
+        if (Input.GetKey(KeyCode.R)) {
+            velocity.y -= (gravity - jumpVelocity/2) * Time.deltaTime;
+        }
+        controller.Move(velocity * Time.deltaTime);
         
         if (Input.GetKeyDown(KeyCode.E)) {
             if (isMovingCrate) {
